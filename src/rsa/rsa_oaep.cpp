@@ -32,9 +32,9 @@ Handle<std::string> RSA_OAEP_enc_dec(
 	if (EVP_PKEY_CTX_set_rsa_padding(ctx.Get(), RSA_PKCS1_OAEP_PADDING) < 1) {
 		THROW_OPENSSL("EVP_PKEY_CTX_set_rsa_padding");
 	}
-	if (EVP_PKEY_CTX_set_rsa_oaep_md(ctx.Get(), md) < 1) {
-		THROW_OPENSSL("EVP_PKEY_CTX_set_rsa_oaep_md");
-	}
+	//if (EVP_PKEY_CTX_set_rsa_oaep_md(ctx.Get(), md) < 1) {
+	//	THROW_OPENSSL("EVP_PKEY_CTX_set_rsa_oaep_md");
+	//}
 	if (EVP_PKEY_CTX_set_rsa_mgf1_md(ctx.Get(), md) < 1) {
 		THROW_OPENSSL("EVP_PKEY_CTX_set_rsa_mgf1_md");
 	}
@@ -46,9 +46,9 @@ Handle<std::string> RSA_OAEP_enc_dec(
 		int label_len = hLabel->length();
 		char *label_copy = (char*)OPENSSL_malloc(label_len);
 		memcpy(label_copy, label, label_len);
-		if (EVP_PKEY_CTX_set0_rsa_oaep_label(ctx.Get(), label_copy, label_len) < 1) {
-			THROW_OPENSSL("EVP_PKEY_CTX_set0_rsa_oaep_label");
-		}
+		//if (EVP_PKEY_CTX_set0_rsa_oaep_label(ctx.Get(), label_copy, label_len) < 1) {
+		//	THROW_OPENSSL("EVP_PKEY_CTX_set0_rsa_oaep_label");
+		//}
 	}
 
 	byte* data = (byte*)hData->c_str();
