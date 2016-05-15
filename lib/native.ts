@@ -52,12 +52,12 @@ export declare class Key {
      * type of key
      */
     type: number;
-    
+
     /**
      * RSA modulus length
      */
     modulusLength(): number;
-    
+
     /**
      * RSA public exponent
      */
@@ -69,6 +69,11 @@ export declare class Key {
      * @param callback callback function (err: Error, jwk: Object)
      */
     exportJwk(keyType: KeyType, callback: (err: Error, jwk: any) => void): void;
+    /**
+     * Export Key to JWK data
+     * @param keyType type of exported key (PRIVATE or PUBLIC)
+     */
+    exportJwk(keyType: KeyType): any;
 
     /**
      * export Key to SPKI
@@ -118,6 +123,14 @@ export declare class Key {
     EcdhDeriveKey(pubkey: Key, derivedLen: number, callback: (err: Error, raw: Buffer) => void): void;
 
     /**
+     * derives bits with ECDH
+     * @param pubkey public key for key derivation
+     * @param lengthBits the number of bits you want to derive
+     * @param callback callback function (err: Error, raw: Buffer)
+     */
+    EcdhDeriveBits(pubkey: Key, lengthBits: number, callback: (err: Error, raw: Buffer) => void): void;
+
+    /**
      * Generate RSA key pair
      * @param modulus modulus size of RSA key pair
      * @param publicExponent public exponent of RSA key pair
@@ -139,6 +152,12 @@ export declare class Key {
      * @param callback callback function (err: Error, key: Key)
      */
     static importJwk(jwk: Object, keyType: KeyType, callback: (err: Error, key: Key) => void): void;
+    /**
+     * create Key from JWK data
+     * @param jwk key in JWK format
+     * @param keyType type of imported key (PRIVATE or PUBLIC)
+     */
+    static importJwk(jwk: Object, keyType: KeyType): any;
 
     /**
      * create Key from SPKI

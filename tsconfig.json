@@ -4,8 +4,9 @@
         "module": "commonjs",
         "rootDir": "lib",
         "outDir": "buildjs",
-        "declaration": true,
-        "sourceMap": true
+        "declaration": false,
+        "sourceMap": false,
+        "noImplicitAny": true
     },
     "exclude": [
         "node_modules", "buildjs"

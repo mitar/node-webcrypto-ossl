@@ -24,7 +24,7 @@ export interface IJwkEcPrivateKey extends IJwkEcPublicKey {
     d: Buffer;
 }
 
-function nc2ssl(nc) {
+function nc2ssl(nc: any) {
     let _namedCurve = "";
     switch (nc.toUpperCase()) {
         case "P-192":
@@ -42,7 +42,7 @@ function nc2ssl(nc) {
         default:
             throw new Error("Unsupported namedCurve in use");
     }
-    return native.EcNamedCurves[_namedCurve];
+    return (native.EcNamedCurves as any)[_namedCurve];
 }
 
 export class Ec extends alg.AlgorithmBase {
@@ -56,7 +56,7 @@ export class Ec extends alg.AlgorithmBase {
 
             let namedCurve = nc2ssl(alg.namedCurve);
 
-            native.Key.generateEc(namedCurve, function(err, key) {
+            native.Key.generateEc(namedCurve, function (err, key) {
                 cb(null, {
                     "privateKey": new CryptoKey(key, alg, "private", extractable, keyUsages),
                     "publicKey": new CryptoKey(key, alg, "public", extractable, keyUsages)
@@ -77,7 +77,7 @@ export class Ec extends alg.AlgorithmBase {
 
             switch (format) {
                 case "pkcs8":
-                    native.Key.importPkcs8(<Buffer>keyData, function(err, key) {
+                    native.Key.importPkcs8(<Buffer>keyData, function (err, key) {
                         if (!err) {
                             let ec = new CryptoKey(key, algorithm, "private", extractable, keyUsages);
                             cb(null, ec);
@@ -87,7 +87,7 @@ export class Ec extends alg.AlgorithmBase {
                     });
                     break;
                 case "spki":
-                    native.Key.importSpki(<Buffer>keyData, function(err, key) {
+                    native.Key.importSpki(<Buffer>keyData, function (err, key) {
                         if (!err) {
                             let ec = new CryptoKey(key, algorithm, "public", extractable, keyUsages);
                             cb(null, ec);
@@ -114,7 +114,7 @@ export class Ec extends alg.AlgorithmBase {
                         key_type = native.KeyType.PRIVATE;
                         (<IJwkEcPrivateKey>jwk).d = new Buffer(base64url.decode(inJwk.d, "binary"), "binary");
                     }
-                    native.Key.importJwk(jwk, key_type, function(err, key) {
+                    native.Key.importJwk(jwk, key_type, function (err, key) {
                         if (!err) {
                             let ec = new CryptoKey(key, algorithm, key_type === native.KeyType.PRIVATE ? "private" : "public", extractable, keyUsages);
                             cb(null, ec);
@@ -157,7 +157,7 @@ export class Ec extends alg.AlgorithmBase {
                         ext: true
                     };
                     let key_type = key.type === "public" ? native.KeyType.PUBLIC : native.KeyType.PRIVATE;
-                    nkey.exportJwk(key_type, function(err, jwk) {
+                    nkey.exportJwk(key_type, function (err, jwk) {
                         if (!err) {
                             try {
                                 pubJwk.x = base64url(jwk.x);
@@ -234,7 +234,7 @@ export interface IEcdsaAlgorithmParams extends IEcAlgorithmParams {
 export class Ecdsa extends Ec {
     static ALGORITHM_NAME: string = ALG_NAME_ECDSA;
 
-    static wc2ssl(alg) {
+    static wc2ssl(alg: any) {
         this.checkAlgorithmHashedParams(alg);
         // let _alg = "ecdsa-with-" + alg.hash.name.toUpperCase().replace("-", "");
         let _alg = alg.hash.name.toUpperCase().replace("-", "");
@@ -244,7 +244,7 @@ export class Ecdsa extends Ec {
     static generateKey(alg: IEcKeyGenParams, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void;
     static generateKey(alg: iwc.IAlgorithmIdentifier, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void;
     static generateKey(alg: any, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void {
-        super.generateKey(alg, extractable, keyUsages, function(err, keys) {
+        super.generateKey(alg, extractable, keyUsages, function (err, keys) {
             if (!err) {
                 keys.privateKey.usages = ["sign"];
                 keys.publicKey.usages = ["verify"];
@@ -289,7 +289,7 @@ export class Ecdsa extends Ec {
     }
 
     static exportKey(format: string, key: CryptoKey, cb: (err: Error, d: Object | Buffer) => void): void {
-        super.exportKey(format, key, function(err, d) {
+        super.exportKey(format, key, function (err, d) {
             if (!err) {
                 if (format === "jwk") {
                     let jwk = <IJwkEcPrivateKey>d;
@@ -317,7 +317,7 @@ export class Ecdh extends Ec {
     static generateKey(alg: IEcKeyGenParams, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void;
     static generateKey(alg: iwc.IAlgorithmIdentifier, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void;
     static generateKey(alg: IEcKeyGenParams, extractable: boolean, keyUsages: string[], cb: (err: Error, d: iwc.ICryptoKeyPair) => void): void {
-        super.generateKey(alg, extractable, keyUsages, function(err, keys) {
+        super.generateKey(alg, extractable, keyUsages, function (err, keys) {
             if (!err) {
                 keys.privateKey.usages = ["deriveKey"];
                 keys.publicKey.usages = [];
@@ -351,9 +351,9 @@ export class Ecdh extends Ec {
             }
 
             // derive key
-            (<native.Key>baseKey.native).EcdhDeriveKey(algorithm.public.native, (<aes.IAesKeyGenParams>derivedKeyType).length, function(err, raw) {
+            (<native.Key>baseKey.native).EcdhDeriveKey(algorithm.public.native, (<aes.IAesKeyGenParams>derivedKeyType).length, function (err, raw) {
                 if (!err) {
-                    native.AesKey.import(raw, function(err, key) {
+                    native.AesKey.import(raw, function (err, key) {
                         if (!err) {
                             let aesKey = new CryptoKey(key, derivedKeyType, "secret", extractable, keyUsages);
                             cb(null, aesKey);
@@ -371,8 +371,29 @@ export class Ecdh extends Ec {
         }
     }
 
+    static deriveBits(algorithm: iwc.IAlgorithmIdentifier, baseKey: CryptoKey, length: number, cb: (err: Error, dbits: Buffer) => void): void;
+    static deriveBits(algorithm: IEcDhAlgorithmParams, baseKey: CryptoKey, length: number, cb: (err: Error, dbits: Buffer) => void): void;
+    static deriveBits(algorithm: IEcDhAlgorithmParams, baseKey: CryptoKey, length: number, cb: (err: Error, dbits: Buffer) => void): void {
+        try {
+            this.checkAlgorithmParams(algorithm);
+            this.checkPublicKey(algorithm.public);
+            this.checkPrivateKey(baseKey);
+            if (algorithm.public.algorithm.name !== "ECDH")
+                throw new TypeError("ECDH::CheckAlgorithm: Public key is not ECDH");
+
+            if (!length)
+                throw new TypeError("ECDH::DeriveBits: Wrong 'length' value");
+
+            // derive bits
+            (<native.Key>baseKey.native).EcdhDeriveBits(algorithm.public.native, length, cb);
+        }
+        catch (e) {
+            cb(e, null);
+        }
+    }
+
     static exportKey(format: string, key: CryptoKey, cb: (err: Error, d: Object | Buffer) => void): void {
-        super.exportKey(format, key, function(err, d) {
+        super.exportKey(format, key, function (err, d) {
             if (!err) {
                 if (format === "jwk") {
                     let jwk = <IJwkEcPrivateKey>d;
