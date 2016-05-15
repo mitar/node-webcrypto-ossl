@@ -1,16 +1,20 @@
 "use strict";
 var subtle = require("./subtle");
 var crypto = require("crypto");
+var key_storage_1 = require("./key_storage");
 /**
- * PKCS11 with WebCrypto Interface
+ * OpenSSL with WebCrypto Interface
  */
 var WebCrypto = (function () {
     /**
      * Constructor
      */
-    function WebCrypto() {
+    function WebCrypto(options) {
+        this.keyStorage = null;
         this.subtle = null;
         this.subtle = new subtle.SubtleCrypto();
+        if (options && options.directory)
+            this.keyStorage = new key_storage_1.KeyStorage(options.directory);
     }
     /**
      * Generates cryptographically random values
@@ -23,4 +27,3 @@ var WebCrypto = (function () {
 }());
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = WebCrypto;
-//# sourceMappingURL=webcrypto.js.map

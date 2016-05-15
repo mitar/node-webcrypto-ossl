@@ -49,4 +49,3 @@ var KeyType = exports.KeyType;
 module.exports.Key = native.Key;
 module.exports.Core = native.Core;
 module.exports.AesKey = native.AesKey;
-//# sourceMappingURL=native.js.map

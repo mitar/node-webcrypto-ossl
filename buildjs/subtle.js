@@ -1,4 +1,3 @@
-/// <reference path="./promise.ts" />
 "use strict";
 var native = require("./native");
 var rsa = require("./rsa");
@@ -36,6 +35,7 @@ function ab2b(ab) {
 function b2ab(b) {
     return new Uint8Array(b).buffer;
 }
+;
 var SubtleCrypto = (function () {
     function SubtleCrypto() {
     }
@@ -277,11 +277,31 @@ var SubtleCrypto = (function () {
                 default:
                     throw new TypeError("Unsupported algorithm in use");
             }
-            AlgClass.deriveKey(algorithm, baseKey, derivedKeyType, extractable, keyUsages, function (err, key) {
+            AlgClass.deriveKey(_alg1, baseKey, _alg2, extractable, keyUsages, function (err, key) {
                 if (err)
                     reject(err);
                 else
                     resolve(key);
+            });
+        });
+    };
+    SubtleCrypto.prototype.deriveBits = function (algorithm, baseKey, length) {
+        var that = this;
+        return new Promise(function (resolve, reject) {
+            var _alg = prepare_algorithm(algorithm);
+            var AlgClass = null;
+            switch (_alg.name.toLowerCase()) {
+                case ec.Ecdh.ALGORITHM_NAME.toLowerCase():
+                    AlgClass = ec.Ecdh;
+                    break;
+                default:
+                    throw new TypeError("Unsupported algorithm in use");
+            }
+            AlgClass.deriveBits(_alg, baseKey, length, function (err, dbits) {
+                if (err)
+                    reject(err);
+                else
+                    resolve(new Uint8Array(dbits).buffer);
             });
         });
     };
@@ -372,4 +392,3 @@ var SubtleCrypto = (function () {
     return SubtleCrypto;
 }());
 exports.SubtleCrypto = SubtleCrypto;
-//# sourceMappingURL=subtle.js.map

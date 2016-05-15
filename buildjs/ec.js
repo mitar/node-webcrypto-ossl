@@ -313,6 +313,22 @@ var Ecdh = (function (_super) {
             cb(e, null);
         }
     };
+    Ecdh.deriveBits = function (algorithm, baseKey, length, cb) {
+        try {
+            this.checkAlgorithmParams(algorithm);
+            this.checkPublicKey(algorithm.public);
+            this.checkPrivateKey(baseKey);
+            if (algorithm.public.algorithm.name !== "ECDH")
+                throw new TypeError("ECDH::CheckAlgorithm: Public key is not ECDH");
+            if (!length)
+                throw new TypeError("ECDH::DeriveBits: Wrong 'length' value");
+            // derive bits
+            baseKey.native.EcdhDeriveBits(algorithm.public.native, length, cb);
+        }
+        catch (e) {
+            cb(e, null);
+        }
+    };
     Ecdh.exportKey = function (format, key, cb) {
         _super.exportKey.call(this, format, key, function (err, d) {
             if (!err) {
@@ -338,4 +354,3 @@ var Ecdh = (function (_super) {
     return Ecdh;
 }(Ec));
 exports.Ecdh = Ecdh;
-//# sourceMappingURL=ec.js.map

@@ -67,6 +67,14 @@ var AlgorithmBase = (function () {
             cb(e, null);
         }
     };
+    AlgorithmBase.deriveBits = function (algorithm, baseKey, length, cb) {
+        try {
+            throw new Error("Method is not supported");
+        }
+        catch (e) {
+            cb(e, null);
+        }
+    };
     AlgorithmBase.exportKey = function (format, key, cb) {
         try {
             throw new Error("Method is not supported");
@@ -152,4 +160,3 @@ var AlgorithmBase = (function () {
     return AlgorithmBase;
 }());
 exports.AlgorithmBase = AlgorithmBase;
-//# sourceMappingURL=alg.js.map
