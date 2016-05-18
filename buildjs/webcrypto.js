@@ -20,8 +20,20 @@ var WebCrypto = (function () {
      * Generates cryptographically random values
      * @param array Initialize array
      */
-    WebCrypto.prototype.getRandomValues = function (array) {
-        return crypto.randomBytes(array.byteLength);
+    // Based on: https://github.com/KenanY/get-random-values
+    WebCrypto.prototype.getRandomValues = function (typedArray) {
+        if (typedArray.byteLength > 65536) {
+            var error = new Error();
+            error.code = 22;
+            error.message = 'Failed to execute \'getRandomValues\' on \'Crypto\': The ' +
+                'ArrayBufferView\'s byte length (' + typedArray.byteLength + ') exceeds the ' +
+                'number of bytes of entropy available via this API (65536).';
+            error.name = 'QuotaExceededError';
+            throw error;
+        }
+        var bytes = crypto.randomBytes(typedArray.byteLength);
+        typedArray.set(bytes);
+        return typedArray;
     };
     return WebCrypto;
 }());
