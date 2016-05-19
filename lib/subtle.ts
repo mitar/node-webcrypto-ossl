@@ -45,14 +45,21 @@ function b2ab(b: Buffer): ArrayBuffer {
     return new Uint8Array(b).buffer;
 }
 
-declare class Promise {
-    constructor(fn: (resolve: Function, reject: Function) => any)
+interface PromiseInstance {}
 
-    static _setImmediateFn(fn: Function) : void
-};
+interface Promise {
+    new(fn: (resolve: Function, reject: Function) => any): PromiseInstance;
+    
+    _setImmediateFn(fn: Function): void;
+}
 
-if (typeof Promise === "undefined") {
-    global.Promise = require("promise-polyfill");
+var Promise: Promise;
+
+if (global.Promise) {
+    Promise = <Promise> global.Promise;
+}
+else {
+    Promise = require("promise-polyfill");
     Promise._setImmediateFn(process.nextTick);
 }
 
