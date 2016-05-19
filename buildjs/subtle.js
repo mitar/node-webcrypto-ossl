@@ -36,6 +36,10 @@ function b2ab(b) {
     return new Uint8Array(b).buffer;
 }
 ;
+if (typeof Promise === "undefined") {
+    global.Promise = require("promise-polyfill");
+    Promise._setImmediateFn(process.nextTick);
+}
 var SubtleCrypto = (function () {
     function SubtleCrypto() {
     }

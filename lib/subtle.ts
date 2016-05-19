@@ -47,7 +47,14 @@ function b2ab(b: Buffer): ArrayBuffer {
 
 declare class Promise {
     constructor(fn: (resolve: Function, reject: Function) => any)
+
+    static _setImmediateFn(fn: Function) : void
 };
+
+if (typeof Promise === "undefined") {
+    global.Promise = require("promise-polyfill");
+    Promise._setImmediateFn(process.nextTick);
+}
 
 export class SubtleCrypto implements SubtleCrypto {
 
